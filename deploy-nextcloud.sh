@@ -7,7 +7,7 @@
 set -e
 
 # Configuration
-COMPOSE_DIR="/home/ubuntu/nextcloud-docker/docker"
+COMPOSE_DIR="/home/ubuntu/nextcloud-servercore/docker"
 LOG_FILE="/tmp/nextcloud-deploy.log"
 
 # Colors for output
@@ -266,7 +266,6 @@ EOF
 success "Deployment information saved to deployment-info.txt"
 
 log "NextCloud deployment completed successfully"
-
 
 echo -e "${BLUE}🔍 For troubleshooting, check the deployment log: $LOG_FILE${NC}"
 echo ""

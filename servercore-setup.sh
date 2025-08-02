@@ -46,7 +46,7 @@ MYSQL_ROOT_PASSWORD=$(openssl rand -base64 32)
 MYSQL_PASSWORD=$(openssl rand -base64 32)
 NEXTCLOUD_ADMIN_PASSWORD=$(openssl rand -base64 16)
 REDIS_PASSWORD=$(openssl rand -base64 24)
-
+COLLABORA_PASSWORD=$(openssl rand -base64 16)
 # Create .env file
 echo "📝 Creating environment configuration..."
 cat > "$DOCKER_DIR/.env" << EOF 
