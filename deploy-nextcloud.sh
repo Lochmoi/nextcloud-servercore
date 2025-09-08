@@ -3,19 +3,11 @@
 #Deploy and start NextCloud services (replaces deploycloud.sh)
 # AUTHOR: Lochmoi
 
-
 set -e
 
 # Configuration
 COMPOSE_DIR="/home/ubuntu/nextcloud-servercore/docker"
 LOG_FILE="/tmp/nextcloud-deploy.log"
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
 
 # Logging function
 log() {
@@ -24,33 +16,34 @@ log() {
 
 # Error handling
 error_exit() {
-    echo -e "${RED}❌ Error: $1${NC}" >&2
+    echo "ERROR: $1" >&2
     log "ERROR: $1"
     exit 1
 }
 
 # Success message
 success() {
-    echo -e "${GREEN}✅ $1${NC}"
+    echo "SUCCESS: $1"
     log "SUCCESS: $1"
 }
 
 # Warning message
 warning() {
-    echo -e "${YELLOW}⚠️  $1${NC}"
+    echo "WARNING: $1"
     log "WARNING: $1"
 }
 
 # Info message
 info() {
-    echo -e "${BLUE}ℹ️  $1${NC}"
+    echo "INFO: $1"
     log "INFO: $1"
 }
 
 # Header
-echo -e "${BLUE}"
-echo "   Servercore Edition (No Monitoring)"
-echo -e "${NC}"
+echo "=============================================="
+echo "  SCRIPT 3/3: NEXTCLOUD DEPLOYMENT"
+echo "  Servercore Edition (No Monitoring)"
+echo "=============================================="
 
 log "Starting NextCloud deployment process"
 
@@ -117,7 +110,7 @@ success "Trusted domains updated"
 
 # Create data directories with proper permissions
 info "Creating data directories..."
-mkdir -p data/{nextcloud,mysql,redis}
+mkdir -p data/{nextcloud,mariadb,redis,onlyoffice}
 mkdir -p nginx
 
 # Set proper ownership (if not root)
@@ -157,7 +150,7 @@ sleep 10
 info "Checking container status..."
 FAILED_CONTAINERS=""
 
-for service in mysql redis nextcloud-app nginx-proxy; do
+for service in mariadb redis nextcloud-app nginx-proxy onlyoffice; do
     if ! docker compose ps | grep -q "$service.*Up"; then
         FAILED_CONTAINERS="$FAILED_CONTAINERS $service"
     fi
@@ -192,51 +185,51 @@ source .env
 
 # Display final information
 echo ""
-echo -e "${GREEN}🎉 NextCloud deployment completed successfully!${NC}"
+echo "NextCloud deployment completed successfully!"
 echo "=============================================="
 echo "  SCRIPT 3/3 COMPLETED: DEPLOYMENT FINISHED"
 echo "=============================================="
 
 echo "================================================="
-echo "           🌐 ACCESS INFORMATION"
+echo "           ACCESS INFORMATION"
 echo "================================================="
 echo ""
-echo "🌍 NextCloud URL:"
+echo "NextCloud URL:"
 echo "   http://$PUBLIC_IP"
 echo ""
-echo "🔐 Admin Credentials:"
+echo "Admin Credentials:"
 echo "   Username: $NEXTCLOUD_ADMIN_USER"
 echo "   Password: $NEXTCLOUD_ADMIN_PASSWORD"
 echo ""
 echo "================================================="
-echo "           📊 CONTAINER STATUS"
+echo "           CONTAINER STATUS"
 echo "================================================="
 docker compose ps
 echo ""
 echo "================================================="
-echo "           🛠️  MANAGEMENT COMMANDS"
+echo "           MANAGEMENT COMMANDS"
 echo "================================================="
 echo ""
-echo "📁 Project directory: $COMPOSE_DIR"
+echo "Project directory: $COMPOSE_DIR"
 echo ""
-echo "🔧 Management commands:"
+echo "Management commands:"
 echo "   Start:   ./start-nextcloud.sh"
 echo "   Stop:    ./stop-nextcloud.sh"
 echo "   Logs:    docker compose logs -f"
 echo "   Status:  docker compose ps"
 echo ""
-echo "📝 Configuration files:"
+echo "Configuration files:"
 echo "   Environment: .env"
 echo "   Compose:     docker-compose.yml"
 echo "   Nginx:       nginx/nginx.conf"
 echo ""
-echo "📋 Next steps:"
+echo "Next steps:"
 echo "1. Open http://$PUBLIC_IP in your browser"
 echo "2. Log in with the admin credentials above"
 echo "3. Complete the NextCloud setup wizard"
 echo "4. Configure your apps and users"
 echo ""
-echo "💾 IMPORTANT: Save your credentials securely!"
+echo "IMPORTANT: Save your credentials securely!"
 echo ""
 
 # Save deployment info
@@ -250,6 +243,10 @@ NextCloud URL: http://$PUBLIC_IP
 Admin Credentials:
 Username: $NEXTCLOUD_ADMIN_USER
 Password: $NEXTCLOUD_ADMIN_PASSWORD
+
+Database: MariaDB
+Database User: $MARIADB_USER
+Database Password: $MARIADB_PASSWORD
 
 Project Directory: $COMPOSE_DIR
 
@@ -267,6 +264,6 @@ success "Deployment information saved to deployment-info.txt"
 
 log "NextCloud deployment completed successfully"
 
-echo -e "${BLUE}🔍 For troubleshooting, check the deployment log: $LOG_FILE${NC}"
+echo "For troubleshooting, check the deployment log: $LOG_FILE"
 echo ""
-echo "🎉 Your NextCloud is now ready to use!"
+echo "Your NextCloud is now ready to use!"
