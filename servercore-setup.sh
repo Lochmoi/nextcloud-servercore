@@ -22,16 +22,18 @@ echo "  With Security and OnlyOffice Integration"
 
 # Configuration
 PROJECT_NAME="nextcloud-servercore"
-DOCKER_DIR="/home/ubuntu/${PROJECT_NAME}/docker"
 
 # Determine user
 if [[ $EUID -eq 0 ]]; then
-    USER_HOME="/root"
     SYSTEM_USER="root"
+    USER_HOME="/root"
 else
-    USER_HOME="/home/ubuntu"
-    SYSTEM_USER="ubuntu"
+    SYSTEM_USER="${USER}"
+    USER_HOME=$(eval echo "~${SYSTEM_USER}")
 fi
+
+DOCKER_DIR="${USER_HOME}/${PROJECT_NAME}/docker"
+
 
 echo "Configuration:"
 echo "   User: $SYSTEM_USER"

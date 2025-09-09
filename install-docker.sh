@@ -20,12 +20,27 @@ echo "  With System Security Hardening"
 
 # Configuration
 SSH_PORT="7392"
-PROJECT_USER="ubuntu"
 
-# Check if running as root
+# Determine project user (root or current)
+if [[ $EUID -eq 0 ]]; then
+    SYSTEM_USER="root"
+    USER_HOME="/root"
+else
+    SYSTEM_USER="${USER}"
+    USER_HOME=$(eval echo "~${SYSTEM_USER}")
+fi
+
+PROJECT_USER="${SYSTEM_USER}"
+
+echo "Configuration:"
+echo "   User:   $SYSTEM_USER"
+echo "   Home:   $USER_HOME"
+echo "   SSH Port: $SSH_PORT"
+echo "----------------------------------------------"
+
 if [[ $EUID -ne 0 ]]; then
-   echo "ERROR: This script must be run as root (use sudo)" 
-   exit 1
+  echo "ERROR: This script must be run as root (use sudo)" 
+  exit 1
 fi
 
 echo "Starting enhanced Docker installation with security..."
